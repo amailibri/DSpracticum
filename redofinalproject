@@ -1,0 +1,60 @@
+'''
+DS Practicum Final Project
+Comparing Homicide Rates in Texas and Illinois
+Testing Correlation to Poverty rates over 2012-2022
+'''
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+
+def main():
+    illinois = pd.read_csv('Illinois_homicide_data_12-22.csv')
+    print("Illinois Columns:", illinois.columns)
+    illinois_yrs = illinois['Years']
+    illinois_homicide = illinois['2012']
+
+    texas = pd.read_csv('Texas_homicide_data_12-22.csv')
+    print("Texas Columns:", texas.columns)
+    texas_yrs = texas['Years']
+    texas_homicide = texas['2012']
+
+    poverty = pd.read_csv('Poverty_data_12-22.csv')
+    print("Poverty Columns:", poverty.columns)
+
+    illinois_poverty = poverty[poverty['Name'] == 'Illinois']['Percent in Poverty']
+    texas_poverty = poverty[poverty['Name'] == 'Texas']['Percent in Poverty']
+    years = poverty[poverty['Name'] == 'Illinois']['Year']
+
+
+    x = np.arange(len(years))
+    plt.bar(x - 0.2, illinois_poverty, width=0.4, label='Illinois')
+    plt.bar(x + 0.2, texas_poverty, width=0.4, label='Texas')
+    plt.xticks(x, years)
+    plt.legend()
+    plt.title("Poverty Rates in Illinois and Texas (2012-2022)")
+    plt.show()
+
+    # Plotting Texas data
+    plt.scatter(texas_yrs, texas_homicide, color='blue', label='Homicides')
+    plt.scatter(texas_yrs, texas_poverty, color='red', label='Poverty')
+    plt.title("Texas Percentage in Poverty and Homicide Data 2012-2022")
+    plt.legend()
+    plt.show()
+
+    # Plotting Illinois data
+    plt.scatter(illinois_yrs, illinois_homicide, color='blue', label='Homicides')
+    plt.scatter(illinois_yrs, illinois_poverty, color='red', label='Poverty')
+    plt.title("Illinois Percentage in Poverty and Homicide Data 2012-2022")
+    plt.legend()
+    plt.show()
+
+
+    # Calculate correlation between poverty and homicide in Illinois
+    illinois_merge = pd.merge(illinois, poverty, left_on='Years', right_on='Year')
+    correlation = illinois_merge['2012'].corr(illinois_merge["Percent in Poverty"])
+    print(f"Correlation between poverty and homicide in Illinois: {correlation}")
+
+
+main()
