@@ -50,11 +50,22 @@ def main():
     plt.legend()
     plt.show()
 
-
     # Calculate correlation between poverty and homicide in Illinois
+    #match the columns year and years
     illinois_merge = pd.merge(illinois, poverty, left_on='Years', right_on='Year')
-    correlation = illinois_merge['2012'].corr(illinois_merge["Percent in Poverty"])
-    print(f"Correlation between poverty and homicide in Illinois: {correlation}")
+    #calculate correlation coefficient for year in data and percentage in poverty
+    for year in range(2012, 2023):  # Loop through years 2012 to 2022
+        column_name = str(year)  # Convert the year to a string for column indexing
+        if column_name in illinois_merge.columns:  # Check if the column exists in the DataFrame
+            correlation = illinois_merge[column_name].corr(illinois_merge["Percent in Poverty"])
+            print(f"Correlation between poverty and homicide in Illinois for {year}: {correlation}")
 
+    # same exact thing for texas data
+    texas_merge = pd.merge(texas, poverty, left_on='Years', right_on='Year')
+    for year in range(2012, 2023):
+        column_name = str(year)
+        if column_name in texas_merge.columns:
+            correlation = texas_merge[column_name].corr(texas_merge["Percent in Poverty"])
+            print(f"Correlation between poverty and homicide in Texas for {year}: {correlation}")
 
 main()
