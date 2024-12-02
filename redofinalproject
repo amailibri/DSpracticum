@@ -13,12 +13,12 @@ def main():
     illinois = pd.read_csv('Illinois_homicide_data_12-22.csv')
     print("Illinois Columns:", illinois.columns)
     illinois_yrs = illinois['Years']
-    illinois_homicide = illinois['2012']
+    illinois_homicide = illinois['query1']
 
     texas = pd.read_csv('Texas_homicide_data_12-22.csv')
     print("Texas Columns:", texas.columns)
     texas_yrs = texas['Years']
-    texas_homicide = texas['2012']
+    texas_homicide = texas['query1']
 
     poverty = pd.read_csv('Poverty_data_12-22.csv')
     print("Poverty Columns:", poverty.columns)
@@ -36,17 +36,11 @@ def main():
     plt.title("Poverty Rates in Illinois and Texas (2012-2022)")
     plt.show()
 
-    # Plotting Texas data
-    plt.scatter(texas_yrs, texas_homicide, color='blue', label='Homicides')
-    plt.scatter(texas_yrs, texas_poverty, color='red', label='Poverty')
-    plt.title("Texas Percentage in Poverty and Homicide Data 2012-2022")
-    plt.legend()
-    plt.show()
-
-    # Plotting Illinois data
-    plt.scatter(illinois_yrs, illinois_homicide, color='blue', label='Homicides')
-    plt.scatter(illinois_yrs, illinois_poverty, color='red', label='Poverty')
-    plt.title("Illinois Percentage in Poverty and Homicide Data 2012-2022")
+    # Plotting homicides and poverty data
+    x = np.arange(len(years))
+    plt.bar(x - 0.2, texas_homicide, width=0.4, label=' Texas Homicides')
+    plt.bar(x + 0.2, illinois_homicide, width=0.4, label='Illinois Homicides')
+    plt.title("Homicide Data in Illinois and Texas (2012-2022)")
     plt.legend()
     plt.show()
 
@@ -67,5 +61,7 @@ def main():
         if column_name in texas_merge.columns:
             correlation = texas_merge[column_name].corr(texas_merge["Percent in Poverty"])
             print(f"Correlation between poverty and homicide in Texas for {year}: {correlation}")
+
+    #plot scatterplot?? correlation between poverty and homicides 
 
 main()
