@@ -1,1 +1,59 @@
+'''
+DS2001 Final Project
+'''
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+illinois_data = pd.read_csv('Illinois_homicide_data_12-22 (1).csv')
+texas_data = pd.read_csv('Texas_homicide_data_12-22 (1).csv')
+poverty_data = pd.read_csv('Poverty_data_12-22.csv')
+
+# The homicide data files have a column named 'query1', which isn't very descriptive so, we renamed it to //
+# 'Homicide Rate'- ultimately, makes it easier for user and the reader to understand/see what the data represents.
+
+illinois_data.rename(columns={'query1': 'Homicide Rate'}, inplace=True)
+texas_data.rename(columns={'query1': 'Homicide Rate'}, inplace=True)
+
+# The poverty data we pulled includes all U.S. states, but since we're only analyzing Illinois and Texas, we need to //
+# filter to encompass just those two. We used the 'ID' column to help us identify which rows correspond to what state.
+
+illinois_poverty = poverty_data[poverty_data['ID'] == 17000]
+texas_poverty = poverty_data[poverty_data['ID'] == 48000]
+
+# Combine the homicide and poverty data into one dataset for both TX and IL
+illinois_merged = pd.merge(illinois_data, illinois_poverty, left_on='Years', right_on='Year', how='inner')
+texas_merged = pd.merge(texas_data, texas_poverty, left_on='Years', right_on='Year', how='inner')
+
+# Illinois Dual Y-Axis Plot
+fig, ax1 = plt.subplots(figsize=(10, 6))
+ax1.plot(illinois_merged['Years'], illinois_merged['Homicide Rate'], color='blue', label='Homicide Rate')
+ax1.set_xlabel('Years')
+ax1.set_ylabel('Homicide Rate', color='blue')
+ax1.tick_params(axis='y', labelcolor='blue')
+
+ax2 = ax1.twinx()
+ax2.plot(illinois_merged['Years'], illinois_merged['Percent in Poverty'], color='green', label='Poverty Rate')
+ax2.set_ylabel('Poverty Rate (%)', color='green')
+ax2.tick_params(axis='y', labelcolor='green')
+
+plt.title('Homicide and Poverty Rates in Illinois (2012-2022)')
+fig.tight_layout()
+plt.show()
+
+# Texas Dual Y-Axis Plot
+fig, ax1 = plt.subplots(figsize=(10, 6))
+ax1.plot(texas_merged['Years'], texas_merged['Homicide Rate'], color='red', label='Homicide Rate')
+ax1.set_xlabel('Years')
+ax1.set_ylabel('Homicide Rate', color='red')
+ax1.tick_params(axis='y', labelcolor='red')
+
+ax2 = ax1.twinx()
+ax2.plot(texas_merged['Years'], texas_merged['Percent in Poverty'], color='orange', label='Poverty Rate')
+ax2.set_ylabel('Poverty Rate (%)', color='orange')
+ax2.tick_params(axis='y', labelcolor='orange')
+
+plt.title('Homicide and Poverty Rates in Texas (2012-2022)')
+fig.tight_layout()
+plt.show()
 
