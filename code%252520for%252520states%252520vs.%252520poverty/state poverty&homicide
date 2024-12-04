@@ -4,10 +4,16 @@ DS2001 Final Project
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+from numpy.ma.extras import average
 
 illinois_data = pd.read_csv('Illinois_homicide_data_12-22 (1).csv')
 texas_data = pd.read_csv('Texas_homicide_data_12-22 (1).csv')
 poverty_data = pd.read_csv('Poverty_data_12-22.csv')
+
+#subset the number of homicides from each state 
+illinois_homicide = illinois_data['query1']
+texas_homicide = texas_data['query1']
 
 # The homicide data files have a column named 'query1', which isn't very descriptive so, we renamed it to //
 # 'Homicide Rate'- ultimately, makes it easier for user and the reader to understand/see what the data represents.
@@ -20,6 +26,23 @@ texas_data.rename(columns={'query1': 'Homicide Rate'}, inplace=True)
 
 illinois_poverty = poverty_data[poverty_data['ID'] == 17000]
 texas_poverty = poverty_data[poverty_data['ID'] == 48000]
+
+#Illinois/Texas poverty bar chart 
+x = np.arange(len(years))
+plt.bar(x - 0.2, illinois_poverty, width=0.4, label='Illinois')
+plt.bar(x + 0.2, texas_poverty, width=0.4, label='Texas')
+plt.xticks(x, years)
+plt.legend()
+plt.title("Poverty Rates in Illinois and Texas (2012-2022)")
+plt.show()
+
+#Illinois/Texas homicides bar chart
+x = np.arange(len(years))
+plt.bar(x - 0.2, texas_homicide, width=0.4, label=' Texas Homicides')
+plt.bar(x + 0.2, illinois_homicide, width=0.4, label='Illinois Homicides')
+plt.title("Homicide Data in Illinois and Texas (2012-2022)")
+plt.legend()
+plt.show()
 
 # Combine the homicide and poverty data into one dataset for both TX and IL
 illinois_merged = pd.merge(illinois_data, illinois_poverty, left_on='Years', right_on='Year', how='inner')
@@ -56,4 +79,44 @@ ax2.tick_params(axis='y', labelcolor='orange')
 plt.title('Homicide and Poverty Rates in Texas (2012-2022)')
 fig.tight_layout()
 plt.show()
+
+#calculate correlation between poverty and homicide in Illinois
+#calculate correlation coefficient for year in data and percentage in poverty
+  for year in range(2012, 2023):  # Loop through years 2012 to 2022
+      column_name = str(year)  # Convert the year to a string for column indexing
+      if column_name in illinois_merged.columns:  # Check if the column exists in the DataFrame
+          correlation = illinois_merged[column_name].corr(illinois_merged["Percent in Poverty"])
+          print(f"Correlation between poverty and homicide in Illinois for {year}: {correlation}")
+      else:
+          print("no correlation")
+
+  #same exact thing for texas data
+  for year in range(2012, 2023):
+      column_name = str(year)
+      if column_name in texas_merged.columns:
+          correlation = texas_merged[column_name].corr(texas_merged["Percent in Poverty"])
+          print(f"Correlation between poverty and homicide in Texas for {year}: {correlation}")
+      else:
+          print(f"no correlation")
+
+    #
+    plt.figure(figsize=(10, 6))
+    plt.scatter(illinois_merged['Percent in Poverty'], illinois_merged['Homicide Rate'], color='blue', label='Illinois')
+    plt.scatter(texas_merged['Percent in Poverty'], texas_merged['Homicide Rate'], color='red', label='Texas')
+    plt.xlabel('Poverty Rate (%)')
+    plt.ylabel('Homicide Rate')
+    plt.title('Correlation between Poverty and Homicide Rates (2012-2022)')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+    #descriptive stats
+    ill_avg = round(average(illinois_homicide), 2)
+    print("The average homicide rate in Illinois between 2012-2022 is", ill_avg)
+    tex_avg = round(average(texas_homicide), 2)
+    print("The average homicide rate in Texas between 2012-2022 is", tex_avg)
+    ill_pov_avg = round(average(poverty_data[poverty_data['Name'] == 'Illinois']['Percent in Poverty']), 2)
+    print("The average poverty percentage in Illinois between 2012-2022 is", ill_pov_avg)
+    tex_pov_avg = round(average(poverty_data[poverty_data['Name'] == 'Texas']['Percent in Poverty']), 2)
+    print("The average poverty percentage in Texas between 2012-2022 is", tex_pov_avg)
 
