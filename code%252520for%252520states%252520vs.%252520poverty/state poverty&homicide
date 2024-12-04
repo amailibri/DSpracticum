@@ -85,7 +85,7 @@ plt.show()
   for year in range(2012, 2023):  # Loop through years 2012 to 2022
       column_name = str(year)  # Convert the year to a string for column indexing
       if column_name in illinois_merged.columns:  # Check if the column exists in the DataFrame
-          correlation = illinois_merged[column_name].corr(illinois_merged["Percent in Poverty"])
+          correlation = illinois_merged[column_name].corr(illinois_merged)
           print(f"Correlation between poverty and homicide in Illinois for {year}: {correlation}")
       else:
           print("no correlation")
@@ -94,7 +94,7 @@ plt.show()
   for year in range(2012, 2023):
       column_name = str(year)
       if column_name in texas_merged.columns:
-          correlation = texas_merged[column_name].corr(texas_merged["Percent in Poverty"])
+          correlation = texas_merged[column_name].corr(texas_merged)
           print(f"Correlation between poverty and homicide in Texas for {year}: {correlation}")
       else:
           print(f"no correlation")
